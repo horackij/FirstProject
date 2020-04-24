@@ -41,7 +41,10 @@ void AFloater::Tick(float DeltaTime)
 	if (bShouldFloat)
 	{
 		FHitResult HitResult;
-		AddActorLocalOffset(InitialDirection, false, &HitResult);
+		AddActorLocalOffset(InitialDirection, true, &HitResult);
+
+		FVector HitLocation = HitResult.Location;
+
 	}
 }
 
