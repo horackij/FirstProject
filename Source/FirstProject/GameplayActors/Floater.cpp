@@ -23,6 +23,12 @@ AFloater::AFloater()
 
 	InitialForce = FVector(2000000.f, 0.0f, 0.0f);
 	InitialTorque = FVector(2000000.f, 0.0f, 0.0f);
+
+	RunningTime = 0.f;
+
+	Amplitude = 1.f;
+	TimeStretch = 1.f;
+	
 }
 
 // Called when the game starts or when spawned
@@ -55,10 +61,13 @@ void AFloater::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (bShouldFloat)
 	{
-		FHitResult HitResult;
-		AddActorLocalOffset(InitialDirection, true, &HitResult);
+		FVector NewLocation = GetActorLocation();
 
-		FVector HitLocation = HitResult.Location;
+		NewLocation.X = NewLocation.X + Amplitude * FMath::Sin(TimeStretch * RunningTime);
+		NewLocation.Y = NewLocation.Y + Amplitude * FMath::Cos(TimeStretch * RunningTime);
+
+		SetActorLocation(NewLocation);
+		RunningTime += DeltaTime;
 
 	}
 
