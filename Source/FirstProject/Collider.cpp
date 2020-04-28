@@ -4,7 +4,10 @@
 #include "Collider.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/InputComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 ACollider::ACollider()
@@ -30,6 +33,18 @@ ACollider::ACollider()
 	}
 
 
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("springArm"));
+	SpringArm->SetupAttachment(GetRootComponent());
+	SpringArm->RelativeRotation = FRotator(-45.f, 0.f, 0.f);
+	SpringArm->TargetArmLength = 400.f;
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->CameraLagSpeed = 3.0f;
+
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
 }
 
 // Called when the game starts or when spawned
@@ -51,5 +66,17 @@ void ACollider::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ACollider::MoveForward);
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ACollider::MoveRight);
 }
 
+void ACollider::MoveForward(float input)
+{
+	FVector Forward = GetActorForwardVector();
+	AddMovementInput(input * Forward);
+}
+void ACollider::MoveRight(float input)
+{
+	FVector Right = GetActorRightVector();
+	AddMovementInput(input * Right);
+}
