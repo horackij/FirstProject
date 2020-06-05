@@ -9,6 +9,7 @@
 #include "Components/InputComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AMain::AMain()
@@ -67,6 +68,16 @@ AMain::AMain()
 	MinSprintStamina = 50.f;
 }
 
+void AMain::ShowPickupLocations()
+{
+	for (auto Location : PickupLocations)
+	{
+		UKismetSystemLibrary::DrawDebugSphere(this, Location, 25.f, 24, FLinearColor::Green, 10.f, .25f);
+	}
+
+	
+}
+
 void AMain::SetMovementStatus(EMovementStatus Status)
 {
 	MovementStatus = Status;
@@ -118,6 +129,7 @@ void AMain::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
 }
 
 // Called every frame
