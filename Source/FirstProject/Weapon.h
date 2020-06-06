@@ -34,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Item | Particles")
 	bool bWeaponParticles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
 	class USoundCue* OnEquipSound;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "SkeletalMesh")

@@ -64,7 +64,10 @@ void AWeapon::Equip(class AMain* Char)
 			Char->SetEquippedWeapon(this);
 			Char->SetActiveOverlappingItem(nullptr);
 		}
-		if (OnEquipSound) UGameplayStatics::PlaySound2D(this, OnEquipSound);
+		if (OnEquipSound)
+		{
+			UGameplayStatics::PlaySound2D(this, OnEquipSound);
+		}
 		if (!bWeaponParticles)
 		{
 			IdleParticlesComponent->Deactivate();
