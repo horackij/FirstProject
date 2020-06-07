@@ -170,6 +170,9 @@ public:
 	bool bAttacking;
 
 	void Attack();
+	
+	UFUNCTION(BlueprintCallable)
+	void AttackeEnd();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Anims")
 	class UAnimMontage* CombatMontage;
