@@ -165,4 +165,13 @@ public:
 
 	void SetEquippedWeapon(AWeapon* WeaponToSet);
 	FORCEINLINE AWeapon* GetEquippedWeapon() { return EquippedWeapon; }
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anims")
+	bool bAttacking;
+
+	void Attack();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Anims")
+	class UAnimMontage* CombatMontage;
+
 };
