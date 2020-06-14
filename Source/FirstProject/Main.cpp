@@ -13,6 +13,8 @@
 #include "Weapon.h"
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMain::AMain()
@@ -354,7 +356,6 @@ void AMain::Attack()
 			default:
 				;
 			}
-			
 		}
 	}
 	
@@ -366,5 +367,13 @@ void AMain::AttackeEnd()
 	if (bLMBDown)
 	{
 		Attack();
+	}
+}
+
+void AMain::PlaySwingSound()
+{
+	if (EquippedWeapon)
+	{
+		UGameplayStatics::PlaySound2D(this, EquippedWeapon->SwingSound);
 	}
 }

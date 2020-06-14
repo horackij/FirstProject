@@ -46,6 +46,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "item | combat")
 	float Damage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
+	USoundCue* SwingSound;
+
+
+
 protected:
 
 	virtual void BeginPlay() override;

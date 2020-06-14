@@ -11,6 +11,7 @@
 #include "Components/BoxComponent.h"
 #include "Enemy.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Sound/SoundCue.h"
 
 
 
@@ -114,6 +115,10 @@ void AWeapon::CombatOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAc
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Enemy->HitParticles, SocketLocation, FRotator(0.f), false);
 				}
 			}
+			if (Enemy->HitSound)
+			{
+				UGameplayStatics::PlaySound2D(this, Enemy->HitSound);
+			}
 		}
 	}
 }
@@ -126,6 +131,7 @@ void AWeapon::CombatOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActo
 void AWeapon::ActivateCollision()
 {
 	CombatCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
 }
 
 void AWeapon::DeactivateCollision()
