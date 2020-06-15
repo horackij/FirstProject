@@ -13,6 +13,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Sound/SoundCue.h"
 #include "Animation/AnimInstance.h"
+#include "TimerManager.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -38,6 +39,9 @@ AEnemy::AEnemy()
 	Health = 75.f;
 	MaxHealth = 100.f;
 	Damage = 10.f;
+
+	AttackMinTime = 0.5f;
+	AttackMaxTime = 3.5f;
 
 }
 
@@ -142,6 +146,7 @@ void AEnemy::CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 					MoveToTarget(Main);
 					CombatTarget = nullptr;
 				}
+				GetWorldTimerManager().ClearTimer(AttackTimer);
 			}
 		}
 	}
@@ -217,18 +222,15 @@ void AEnemy::Attack()
 {
 	if (AIController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inside AIController"));
 		AIController->StopMovement();
 		SetEnemyMovementStatus(EEnemyMovementStatus::EMS_Attacking);
 	}
 	if (!bAttacking)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inside !bAttacking"));
 		bAttacking = true;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Inside AnimInstance"));
 			AnimInstance->Montage_Play(CombatMontage, 1.35f);
 			AnimInstance->Montage_JumpToSection(FName("Attack"), CombatMontage);
 		}		
@@ -240,7 +242,8 @@ void AEnemy::AttackEnd()
 	bAttacking = false;
 	if (bOverlappingCombatSphere)
 	{
-		Attack();
+		float AttackTime = FMath::FRandRange(AttackMinTime, AttackMaxTime);
+		GetWorldTimerManager().SetTimer(AttackTimer, this, &AEnemy::Attack, AttackTime);
 	}
 }
 
