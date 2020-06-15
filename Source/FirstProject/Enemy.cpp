@@ -118,6 +118,7 @@ void AEnemy::CombatSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComponent
 		{
 			if (Main)
 			{
+				Main->SetCombatTarget(this);
 				CombatTarget = Main;
 				bOverlappingCombatSphere = true;
 				Attack();
@@ -134,6 +135,7 @@ void AEnemy::CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 		{
 			if (Main)
 			{
+				Main->SetCombatTarget(nullptr);
 				bOverlappingCombatSphere = false;
 				if (EnemyMovementStatus != EEnemyMovementStatus::EMS_Attacking)
 				{
