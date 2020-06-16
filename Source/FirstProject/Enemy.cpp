@@ -32,9 +32,7 @@ AEnemy::AEnemy()
 	AgroSphere->InitSphereRadius(75.f);
 
 	CombatCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("CombatCollision"));
-	//CombatCollision->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("EnemySocket")); - this works
-	//CombatCollision->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("EnemySocket")); - code from course  - doesnt work
-	CombatCollision->SetupAttachment(GetMesh(), FName("EnemySocket")); // - advised to use this instead
+	CombatCollision->SetupAttachment(GetMesh(), FName("EnemySocket")); 
 
 	bOverlappingCombatSphere = false;
 
