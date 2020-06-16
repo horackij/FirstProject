@@ -80,6 +80,9 @@ AMain::AMain()
 	bInterpToEnemy = false;
 
 	bHasCombatTarget = false;
+
+	bMovingForward = false;
+	bMovingRight = false;
 }
 
 void AMain::ShowPickupLocations()
@@ -119,7 +122,10 @@ void AMain::SetMovementStatus(EMovementStatus Status)
 
 void AMain::ShiftKeyDown()
 {
-	bShiftKeyDown = true;
+	if (bMovingForward || bMovingRight)
+	{
+		bShiftKeyDown = true;
+	}
 }
 
 void AMain::ShiftKeyUp()
@@ -212,7 +218,14 @@ void AMain::Tick(float DeltaTime)
 			{
 				Stamina -= DeltaStamina;
 			}
-			SetMovementStatus(EMovementStatus::EMS_Sprinting);
+			if (bMovingForward || bMovingRight)
+			{
+				SetMovementStatus(EMovementStatus::EMS_Sprinting);
+			}
+			else
+			{
+				SetMovementStatus(EMovementStatus::EMS_Normal);
+			}
 		}
 		else //shift key is up
 		{
@@ -240,7 +253,14 @@ void AMain::Tick(float DeltaTime)
 			else
 			{
 				Stamina -= DeltaStamina;
-				SetMovementStatus(EMovementStatus::EMS_Sprinting);
+				if (bMovingForward || bMovingRight)
+				{
+					SetMovementStatus(EMovementStatus::EMS_Sprinting);
+				}
+				else
+				{
+					SetMovementStatus(EMovementStatus::EMS_Normal);
+				}
 			}
 		}
 		else // Shift Key is up
@@ -333,8 +353,10 @@ void AMain::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMain::MoveForward(float Value)
 {
+	bMovingForward = false;
 	if ((Controller != nullptr) && (Value != 0.0f) && (!bAttacking) && (MovementStatus != EMovementStatus::EMS_Dead))
 	{
+		bMovingForward = true;
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -346,8 +368,10 @@ void AMain::MoveForward(float Value)
 
 void AMain::MoveRight(float Value)
 {
+	bMovingRight = false;
 	if ((Controller != nullptr) && (Value != 0.0f) && (!bAttacking) && (MovementStatus != EMovementStatus::EMS_Dead))
 	{
+		bMovingRight = true;
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);

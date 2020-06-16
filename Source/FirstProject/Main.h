@@ -178,6 +178,9 @@ public:
 	// @param Rate This is a normalized rate, ie 1.0 means 100% of desired look up/down rate
 	void LookUpAtRate(float Rate);
 
+	bool bMovingForward;
+	bool bMovingRight;
+
 	bool bLMBDown;
 
 	void LMBDown();
