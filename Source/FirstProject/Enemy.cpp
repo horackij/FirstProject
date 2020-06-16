@@ -147,7 +147,10 @@ void AEnemy::CombatSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComponent
 
 				CombatTarget = Main;
 				bOverlappingCombatSphere = true;
-				Attack();
+
+				float AttackTime = FMath::FRandRange(AttackMinTime, AttackMaxTime);
+				GetWorldTimerManager().SetTimer(AttackTimer, this, &AEnemy::Attack, AttackTime);
+				//Attack();
 			}
 		}
 	}
@@ -160,10 +163,9 @@ void AEnemy::CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 		AMain* Main = Cast<AMain>(OtherActor);
 		{
 			if (Main)
-			{
-				
+			{				
 				bOverlappingCombatSphere = false;
-				if (EnemyMovementStatus != EEnemyMovementStatus::EMS_Attacking)
+				if (EnemyMovementStatus == EEnemyMovementStatus::EMS_Attacking)
 				{
 					MoveToTarget(Main);
 					CombatTarget = nullptr;
