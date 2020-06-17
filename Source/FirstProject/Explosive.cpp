@@ -9,6 +9,7 @@
 #include "Sound/SoundCue.h"
 #include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
 
 AExplosive::AExplosive()
 {
@@ -27,18 +28,22 @@ void AExplosive::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 		AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 		if (Main || Enemy)
 		{
-			if (OverlapParticles)
+			UCapsuleComponent* CapsuleComponent = Cast<UCapsuleComponent>(OtherComp);   //check to see if other component overlapping is the capsule component (prevents agrosphere from triggering explosives)
+			if (CapsuleComponent)
 			{
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OverlapParticles, GetActorLocation(), FRotator(0.f), true);
-			}
-			if (OverlapSound)
-			{
-				UGameplayStatics::PlaySound2D(this, OverlapSound);
-			}
+				if (OverlapParticles)
+				{
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OverlapParticles, GetActorLocation(), FRotator(0.f), true);
+				}
+				if (OverlapSound)
+				{
+					UGameplayStatics::PlaySound2D(this, OverlapSound);
+				}
 
-			UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, DamageTypeClass);
-			//Main->DecrementHealth(Damage);
-			Destroy();
+				UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, DamageTypeClass);
+				
+				Destroy();
+			}
 		}
 	}
 }
