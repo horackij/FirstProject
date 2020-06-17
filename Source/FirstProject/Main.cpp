@@ -480,3 +480,47 @@ void AMain::DeathEnd()
 	GetMesh()->bPauseAnims = true;
 	GetMesh()->bNoSkeletonUpdate = true;
 }
+
+void AMain::UpdateCombatTarget()
+{
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, EnemyFilter);		// create an array of enemy actors
+
+	if (OverlappingActors.Num() == 0)							// if none 
+	{
+		if (MainPlayerController)
+		{
+			MainPlayerController->RemoveEnemyHealthBar();		// Remove enemy Health Bar
+		}
+		return;
+	}
+		
+	AEnemy* ClosestEnemy = Cast<AEnemy>(OverlappingActors[0]);	//cast first actor to enemy
+	if (ClosestEnemy)
+	{
+		FVector Location = GetActorLocation();					//Get Main character location
+		float MinDistance = (ClosestEnemy->GetActorLocation() - Location).Size(); //calculate distance from enemy to main character
+		for (auto Actor : OverlappingActors)					//loop through all actors in array
+		{
+			AEnemy* Enemy = Cast<AEnemy>(Actor);				//cast to enemy
+			if (Enemy)
+			{
+
+				float DistanceToActor = (Enemy->GetActorLocation() - Location).Size(); //get distance from enemy to main character.
+				if (DistanceToActor < MinDistance)				//check to see if new enemy is closer
+				{
+					MinDistance = DistanceToActor;				//if new enemy is closer save new distance
+					ClosestEnemy = Enemy;						//save enemy who is closest
+				}
+			}
+			
+		}
+		if (MainPlayerController)
+		{
+			MainPlayerController->DisplayEnemyHealthBar();		//Display health bar of closest enemy
+		}
+		SetCombatTarget(ClosestEnemy);							//set combat target to closest enemy
+		bHasCombatTarget = true;
+	}
+	
+}
