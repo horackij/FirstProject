@@ -52,9 +52,9 @@ public:
 
 	void RemoveEnemyHealthBar();
 
-	
-
 	FVector EnemyLocation;
+
+	void GameModeOnly();
 
 protected:
 	virtual void BeginPlay() override;

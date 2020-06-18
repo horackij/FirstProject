@@ -24,7 +24,7 @@
 // Sets default values
 AMain::AMain()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create Camera Boom (Pulls toward player if there's a collision)
@@ -47,7 +47,7 @@ AMain::AMain()
 	BaseTurnRate = 65.f;
 	BaseLookUpRate = 65.f;
 
-	//dont rotate when the controller rotates.
+	//do not rotate when the controller rotates.
 	//let that just effect the camera
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -88,14 +88,28 @@ AMain::AMain()
 	bMovingRight = false;
 }
 
+// Called when the game starts or when spawned
+void AMain::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MainPlayerController = Cast<AMainPlayerController>(GetController());
+
+	LoadGameNoSwitch();
+	if (MainPlayerController)
+	{
+		MainPlayerController->GameModeOnly();
+	}
+
+}
+
+
 void AMain::ShowPickupLocations()
 {
 	for (auto Location : PickupLocations)
 	{
 		UKismetSystemLibrary::DrawDebugSphere(this, Location, 25.f, 24, FLinearColor::Green, 10.f, .25f);
 	}
-
-	
 }
 
 void AMain::SetInterpToEnemy(bool Interp)
@@ -204,14 +218,6 @@ void AMain::IncrementHealth(float Amount)
 	}
 }
 
-// Called when the game starts or when spawned
-void AMain::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	MainPlayerController = Cast<AMainPlayerController>(GetController());
-
-}
 
 // Called every frame
 void AMain::Tick(float DeltaTime)
@@ -587,6 +593,11 @@ void AMain::SaveGame()
 	SaveGameInstance->CharacterStats.MaxStamina = MaxStamina;
 	SaveGameInstance->CharacterStats.Coins = Coins;
 
+	FString MapName = GetWorld()->GetMapName();
+	MapName.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);   // Strips away unnecessary characters from beginning of map name
+
+	SaveGameInstance->CharacterStats.LevelName = MapName;
+
 	if (EquippedWeapon)
 	{
 		SaveGameInstance->CharacterStats.WeaponName = EquippedWeapon->Name;
@@ -630,6 +641,45 @@ void AMain::LoadGame(bool SetPosition)
 	{
 		SetActorLocation(LoadGameInstance->CharacterStats.Location);
 		SetActorRotation(LoadGameInstance->CharacterStats.Rotation);
+	}
+
+	SetMovementStatus(EMovementStatus::EMS_Normal);
+	GetMesh()->bPauseAnims = false;
+	GetMesh()->bNoSkeletonUpdate = false;
+
+	if (LoadGameInstance->CharacterStats.LevelName != TEXT(""))
+	{
+		FName LevelName(*LoadGameInstance->CharacterStats.LevelName);
+		SwitchLevel(LevelName);
+	}
+}
+
+void AMain::LoadGameNoSwitch()
+{
+	UFirstSaveGame* LoadGameInstance = Cast<UFirstSaveGame>(UGameplayStatics::CreateSaveGameObject(UFirstSaveGame::StaticClass()));
+
+	LoadGameInstance = Cast<UFirstSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->PlayerName, LoadGameInstance->UserIndex));
+
+	Health = LoadGameInstance->CharacterStats.Health;
+	MaxHealth = LoadGameInstance->CharacterStats.MaxHealth;
+	Stamina = LoadGameInstance->CharacterStats.Stamina;
+	MaxStamina = LoadGameInstance->CharacterStats.MaxStamina;
+	Coins = LoadGameInstance->CharacterStats.Coins;
+
+	if (WeaponStorage)
+	{
+		AItemStorage* Weapons = GetWorld()->SpawnActor<AItemStorage>(WeaponStorage);
+		if (Weapons)
+		{
+			FString WeaponName = LoadGameInstance->CharacterStats.WeaponName;
+			Weapons->WeaponMap[WeaponName];
+
+			if (Weapons->WeaponMap.Contains(WeaponName))
+			{
+				AWeapon* WeaponToEquip = GetWorld()->SpawnActor<AWeapon>(Weapons->WeaponMap[WeaponName]);
+				WeaponToEquip->Equip(this);
+			}
+		}
 	}
 
 	SetMovementStatus(EMovementStatus::EMS_Normal);
