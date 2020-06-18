@@ -536,3 +536,18 @@ void AMain::UpdateCombatTarget()
 	}
 	
 }
+
+void AMain::SwitchLevel(FName LevelName)
+{
+	UWorld* World = GetWorld();								//Get the world
+	if (World)
+	{
+		FString CurrentLevel = World->GetMapName();			//Get the current Map Name
+
+		FName CurrentLevelName(*CurrentLevel);				//Convert CurrentLevel (which is an FString) into a FName.
+		if (CurrentLevelName != LevelName)					//Check to make sure the current level is not the level to switch to
+		{
+			UGameplayStatics::OpenLevel(World, LevelName);	//Open the new level
+		}
+	}
+}
