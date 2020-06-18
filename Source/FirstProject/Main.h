@@ -194,6 +194,13 @@ public:
 
 	void LMBUP();
 
+	bool bESCDown;
+
+	void ESCDown();
+
+	void ESCUp();
+
+
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
