@@ -185,6 +185,11 @@ public:
 	// @param Rate This is a normalized rate, ie 1.0 means 100% of desired look up/down rate
 	void LookUpAtRate(float Rate);
 
+	bool CanMove(float Value);
+
+	void Turn(float Value);		//Called for Yaw Rotation
+	void LookUp(float Value);	//Called for PithRotation
+
 	bool bMovingForward;
 	bool bMovingRight;
 
@@ -244,5 +249,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadGame(bool SetPosition);
+
+
+
 
 };
